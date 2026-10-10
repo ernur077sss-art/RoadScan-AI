@@ -1,0 +1,9 @@
+.git
+.venv
+.data
+.env*
+web/node_modules
+web/.next
+.brand-preview
+**/__pycache__
+**/.pytest_cache

@@ -1,0 +1,626 @@
+[
+  {
+    "name": "Тёплая бумага",
+    "vibe": "Ivory Linen · спокойная терракота",
+    "light": {
+      "background": "oklch(0.980 0.005 75)",
+      "foreground": "oklch(0.220 0.015 75)",
+      "card": "oklch(1.000 0.000 0)",
+      "card-foreground": "oklch(0.220 0.015 75)",
+      "popover": "oklch(1.000 0.000 0)",
+      "popover-foreground": "oklch(0.220 0.015 75)",
+      "primary": "oklch(0.480 0.120 30)",
+      "primary-foreground": "oklch(0.990 0.000 0)",
+      "secondary": "oklch(0.940 0.010 75)",
+      "secondary-foreground": "oklch(0.220 0.015 75)",
+      "muted": "oklch(0.950 0.005 75)",
+      "muted-foreground": "oklch(0.440 0.014 75)",
+      "accent": "oklch(0.940 0.010 75)",
+      "accent-foreground": "oklch(0.220 0.015 75)",
+      "destructive": "oklch(0.510 0.190 25)",
+      "destructive-foreground": "oklch(0.990 0.000 0)",
+      "border": "oklch(0.800 0.005 75)",
+      "input": "oklch(1.000 0.000 0)",
+      "ring": "oklch(0.480 0.120 30)",
+      "radius": ".75rem"
+    },
+    "dark": {
+      "background": "oklch(0.170 0.005 75)",
+      "foreground": "oklch(0.960 0.005 75)",
+      "card": "oklch(0.220 0.005 75)",
+      "card-foreground": "oklch(0.960 0.005 75)",
+      "popover": "oklch(0.220 0.005 75)",
+      "popover-foreground": "oklch(0.960 0.005 75)",
+      "primary": "oklch(0.780 0.090 30)",
+      "primary-foreground": "oklch(0.160 0.005 75)",
+      "secondary": "oklch(0.280 0.010 75)",
+      "secondary-foreground": "oklch(0.960 0.005 75)",
+      "muted": "oklch(0.260 0.005 75)",
+      "muted-foreground": "oklch(0.760 0.012 75)",
+      "accent": "oklch(0.280 0.010 75)",
+      "accent-foreground": "oklch(0.960 0.005 75)",
+      "destructive": "oklch(0.510 0.190 25)",
+      "destructive-foreground": "oklch(0.990 0.000 0)",
+      "border": "oklch(0.440 0.005 75)",
+      "input": "oklch(0.220 0.005 75)",
+      "ring": "oklch(0.780 0.090 30)",
+      "radius": ".75rem"
+    },
+    "checks": {
+      "light": {
+        "foreground/background": 16.35,
+        "foreground/card": 17.33,
+        "foreground/popover": 17.33,
+        "foreground/muted": 14.97,
+        "muted-foreground/background": 7.34,
+        "muted-foreground/card": 7.78,
+        "muted-foreground/muted": 6.72,
+        "primary-foreground/primary": 6.74,
+        "secondary-foreground/secondary": 14.52,
+        "accent-foreground/accent": 14.52,
+        "destructive-foreground/destructive": 6.17,
+        "primary/background": 6.54,
+        "ring/background": 6.54,
+        "border/background": 1.76
+      },
+      "dark": {
+        "foreground/background": 17.02,
+        "foreground/card": 15.41,
+        "foreground/popover": 15.41,
+        "foreground/muted": 13.83,
+        "muted-foreground/background": 8.9,
+        "muted-foreground/card": 8.06,
+        "muted-foreground/muted": 7.23,
+        "primary-foreground/primary": 9.37,
+        "secondary-foreground/secondary": 13.0,
+        "accent-foreground/accent": 13.0,
+        "destructive-foreground/destructive": 6.17,
+        "primary/background": 9.23,
+        "ring/background": 9.23,
+        "border/background": 2.46
+      }
+    },
+    "seeds": [
+      {
+        "oklch": "oklch(0.980 0.005 75)",
+        "hex": "#FAF8F5"
+      },
+      {
+        "oklch": "oklch(1.000 0.000 0)",
+        "hex": "#FFFFFF"
+      },
+      {
+        "oklch": "oklch(0.480 0.120 30)",
+        "hex": "#953E32"
+      },
+      {
+        "oklch": "oklch(0.850 0.060 30)",
+        "hex": "#F3C0B7"
+      },
+      {
+        "oklch": "oklch(0.220 0.015 75)",
+        "hex": "#1F1A13"
+      }
+    ]
+  },
+  {
+    "name": "Персиковый город",
+    "vibe": "Peach Comfort · мягкий и открытый",
+    "light": {
+      "background": "oklch(0.980 0.020 45)",
+      "foreground": "oklch(0.220 0.015 45)",
+      "card": "oklch(1.000 0.000 0)",
+      "card-foreground": "oklch(0.220 0.015 45)",
+      "popover": "oklch(1.000 0.000 0)",
+      "popover-foreground": "oklch(0.220 0.015 45)",
+      "primary": "oklch(0.530 0.160 30)",
+      "primary-foreground": "oklch(0.990 0.000 0)",
+      "secondary": "oklch(0.940 0.025 45)",
+      "secondary-foreground": "oklch(0.220 0.015 45)",
+      "muted": "oklch(0.950 0.020 45)",
+      "muted-foreground": "oklch(0.440 0.014 45)",
+      "accent": "oklch(0.940 0.025 45)",
+      "accent-foreground": "oklch(0.220 0.015 45)",
+      "destructive": "oklch(0.510 0.190 25)",
+      "destructive-foreground": "oklch(0.990 0.000 0)",
+      "border": "oklch(0.800 0.020 45)",
+      "input": "oklch(1.000 0.000 0)",
+      "ring": "oklch(0.530 0.160 30)",
+      "radius": ".75rem"
+    },
+    "dark": {
+      "background": "oklch(0.170 0.020 45)",
+      "foreground": "oklch(0.960 0.020 45)",
+      "card": "oklch(0.220 0.020 45)",
+      "card-foreground": "oklch(0.960 0.020 45)",
+      "popover": "oklch(0.220 0.020 45)",
+      "popover-foreground": "oklch(0.960 0.020 45)",
+      "primary": "oklch(0.780 0.120 30)",
+      "primary-foreground": "oklch(0.160 0.005 45)",
+      "secondary": "oklch(0.280 0.025 45)",
+      "secondary-foreground": "oklch(0.960 0.020 45)",
+      "muted": "oklch(0.260 0.020 45)",
+      "muted-foreground": "oklch(0.760 0.012 45)",
+      "accent": "oklch(0.280 0.025 45)",
+      "accent-foreground": "oklch(0.960 0.020 45)",
+      "destructive": "oklch(0.510 0.190 25)",
+      "destructive-foreground": "oklch(0.990 0.000 0)",
+      "border": "oklch(0.440 0.020 45)",
+      "input": "oklch(0.220 0.020 45)",
+      "ring": "oklch(0.780 0.120 30)",
+      "radius": ".75rem"
+    },
+    "checks": {
+      "light": {
+        "foreground/background": 16.13,
+        "foreground/card": 17.37,
+        "foreground/popover": 17.37,
+        "foreground/muted": 14.93,
+        "muted-foreground/background": 7.25,
+        "muted-foreground/card": 7.81,
+        "muted-foreground/muted": 6.71,
+        "primary-foreground/primary": 5.55,
+        "secondary-foreground/secondary": 14.47,
+        "accent-foreground/accent": 14.47,
+        "destructive-foreground/destructive": 6.17,
+        "primary/background": 5.3,
+        "ring/background": 5.3,
+        "border/background": 1.74
+      },
+      "dark": {
+        "foreground/background": 16.99,
+        "foreground/card": 15.4,
+        "foreground/popover": 15.4,
+        "foreground/muted": 13.84,
+        "muted-foreground/background": 8.9,
+        "muted-foreground/card": 8.07,
+        "muted-foreground/muted": 7.25,
+        "primary-foreground/primary": 9.26,
+        "secondary-foreground/secondary": 13.02,
+        "accent-foreground/accent": 13.02,
+        "destructive-foreground/destructive": 6.17,
+        "primary/background": 9.15,
+        "ring/background": 9.15,
+        "border/background": 2.45
+      }
+    },
+    "seeds": [
+      {
+        "oklch": "oklch(0.980 0.020 45)",
+        "hex": "#FFF5EE"
+      },
+      {
+        "oklch": "oklch(1.000 0.000 0)",
+        "hex": "#FFFFFF"
+      },
+      {
+        "oklch": "oklch(0.530 0.160 30)",
+        "hex": "#B63C2E"
+      },
+      {
+        "oklch": "oklch(0.850 0.080 30)",
+        "hex": "#FEBBAF"
+      },
+      {
+        "oklch": "oklch(0.220 0.015 45)",
+        "hex": "#211815"
+      }
+    ]
+  },
+  {
+    "name": "Песчаный берег",
+    "vibe": "Sand Club · сдержанный и тёплый",
+    "light": {
+      "background": "oklch(0.980 0.010 85)",
+      "foreground": "oklch(0.220 0.015 85)",
+      "card": "oklch(1.000 0.000 0)",
+      "card-foreground": "oklch(0.220 0.015 85)",
+      "popover": "oklch(1.000 0.000 0)",
+      "popover-foreground": "oklch(0.220 0.015 85)",
+      "primary": "oklch(0.420 0.070 50)",
+      "primary-foreground": "oklch(0.990 0.000 0)",
+      "secondary": "oklch(0.940 0.015 85)",
+      "secondary-foreground": "oklch(0.220 0.015 85)",
+      "muted": "oklch(0.950 0.010 85)",
+      "muted-foreground": "oklch(0.440 0.014 85)",
+      "accent": "oklch(0.940 0.015 85)",
+      "accent-foreground": "oklch(0.220 0.015 85)",
+      "destructive": "oklch(0.510 0.190 25)",
+      "destructive-foreground": "oklch(0.990 0.000 0)",
+      "border": "oklch(0.800 0.010 85)",
+      "input": "oklch(1.000 0.000 0)",
+      "ring": "oklch(0.420 0.070 50)",
+      "radius": ".75rem"
+    },
+    "dark": {
+      "background": "oklch(0.170 0.010 85)",
+      "foreground": "oklch(0.960 0.010 85)",
+      "card": "oklch(0.220 0.010 85)",
+      "card-foreground": "oklch(0.960 0.010 85)",
+      "popover": "oklch(0.220 0.010 85)",
+      "popover-foreground": "oklch(0.960 0.010 85)",
+      "primary": "oklch(0.780 0.053 50)",
+      "primary-foreground": "oklch(0.160 0.005 85)",
+      "secondary": "oklch(0.280 0.015 85)",
+      "secondary-foreground": "oklch(0.960 0.010 85)",
+      "muted": "oklch(0.260 0.010 85)",
+      "muted-foreground": "oklch(0.760 0.012 85)",
+      "accent": "oklch(0.280 0.015 85)",
+      "accent-foreground": "oklch(0.960 0.010 85)",
+      "destructive": "oklch(0.510 0.190 25)",
+      "destructive-foreground": "oklch(0.990 0.000 0)",
+      "border": "oklch(0.440 0.010 85)",
+      "input": "oklch(0.220 0.010 85)",
+      "ring": "oklch(0.780 0.053 50)",
+      "radius": ".75rem"
+    },
+    "checks": {
+      "light": {
+        "foreground/background": 16.35,
+        "foreground/card": 17.32,
+        "foreground/popover": 17.32,
+        "foreground/muted": 14.96,
+        "muted-foreground/background": 7.33,
+        "muted-foreground/card": 7.77,
+        "muted-foreground/muted": 6.71,
+        "primary-foreground/primary": 8.43,
+        "secondary-foreground/secondary": 14.52,
+        "accent-foreground/accent": 14.52,
+        "destructive-foreground/destructive": 6.17,
+        "primary/background": 8.19,
+        "ring/background": 8.19,
+        "border/background": 1.76
+      },
+      "dark": {
+        "foreground/background": 17.02,
+        "foreground/card": 15.41,
+        "foreground/popover": 15.41,
+        "foreground/muted": 13.83,
+        "muted-foreground/background": 8.91,
+        "muted-foreground/card": 8.06,
+        "muted-foreground/muted": 7.24,
+        "primary-foreground/primary": 9.56,
+        "secondary-foreground/secondary": 12.99,
+        "accent-foreground/accent": 12.99,
+        "destructive-foreground/destructive": 6.17,
+        "primary/background": 9.42,
+        "ring/background": 9.42,
+        "border/background": 2.46
+      }
+    },
+    "seeds": [
+      {
+        "oklch": "oklch(0.980 0.010 85)",
+        "hex": "#FBF8F1"
+      },
+      {
+        "oklch": "oklch(1.000 0.000 0)",
+        "hex": "#FFFFFF"
+      },
+      {
+        "oklch": "oklch(0.420 0.070 50)",
+        "hex": "#6C4128"
+      },
+      {
+        "oklch": "oklch(0.850 0.035 50)",
+        "hex": "#E2C8BA"
+      },
+      {
+        "oklch": "oklch(0.220 0.015 85)",
+        "hex": "#1E1A13"
+      }
+    ]
+  },
+  {
+    "name": "Добрый сосед",
+    "vibe": "Авторская · кирпичный акцент",
+    "light": {
+      "background": "oklch(0.980 0.008 65)",
+      "foreground": "oklch(0.220 0.015 65)",
+      "card": "oklch(1.000 0.000 0)",
+      "card-foreground": "oklch(0.220 0.015 65)",
+      "popover": "oklch(1.000 0.000 0)",
+      "popover-foreground": "oklch(0.220 0.015 65)",
+      "primary": "oklch(0.490 0.140 42)",
+      "primary-foreground": "oklch(0.990 0.000 0)",
+      "secondary": "oklch(0.940 0.013 65)",
+      "secondary-foreground": "oklch(0.220 0.015 65)",
+      "muted": "oklch(0.950 0.008 65)",
+      "muted-foreground": "oklch(0.440 0.014 65)",
+      "accent": "oklch(0.940 0.013 65)",
+      "accent-foreground": "oklch(0.220 0.015 65)",
+      "destructive": "oklch(0.510 0.190 25)",
+      "destructive-foreground": "oklch(0.990 0.000 0)",
+      "border": "oklch(0.800 0.008 65)",
+      "input": "oklch(1.000 0.000 0)",
+      "ring": "oklch(0.490 0.140 42)",
+      "radius": ".75rem"
+    },
+    "dark": {
+      "background": "oklch(0.170 0.008 65)",
+      "foreground": "oklch(0.960 0.008 65)",
+      "card": "oklch(0.220 0.008 65)",
+      "card-foreground": "oklch(0.960 0.008 65)",
+      "popover": "oklch(0.220 0.008 65)",
+      "popover-foreground": "oklch(0.960 0.008 65)",
+      "primary": "oklch(0.780 0.105 42)",
+      "primary-foreground": "oklch(0.160 0.005 65)",
+      "secondary": "oklch(0.280 0.013 65)",
+      "secondary-foreground": "oklch(0.960 0.008 65)",
+      "muted": "oklch(0.260 0.008 65)",
+      "muted-foreground": "oklch(0.760 0.012 65)",
+      "accent": "oklch(0.280 0.013 65)",
+      "accent-foreground": "oklch(0.960 0.008 65)",
+      "destructive": "oklch(0.510 0.190 25)",
+      "destructive-foreground": "oklch(0.990 0.000 0)",
+      "border": "oklch(0.440 0.008 65)",
+      "input": "oklch(0.220 0.008 65)",
+      "ring": "oklch(0.780 0.105 42)",
+      "radius": ".75rem"
+    },
+    "checks": {
+      "light": {
+        "foreground/background": 16.36,
+        "foreground/card": 17.34,
+        "foreground/popover": 17.34,
+        "foreground/muted": 14.97,
+        "muted-foreground/background": 7.34,
+        "muted-foreground/card": 7.79,
+        "muted-foreground/muted": 6.72,
+        "primary-foreground/primary": 6.47,
+        "secondary-foreground/secondary": 14.52,
+        "accent-foreground/accent": 14.52,
+        "destructive-foreground/destructive": 6.17,
+        "primary/background": 6.28,
+        "ring/background": 6.28,
+        "border/background": 1.76
+      },
+      "dark": {
+        "foreground/background": 17.01,
+        "foreground/card": 15.41,
+        "foreground/popover": 15.41,
+        "foreground/muted": 13.83,
+        "muted-foreground/background": 8.89,
+        "muted-foreground/card": 8.05,
+        "muted-foreground/muted": 7.23,
+        "primary-foreground/primary": 9.37,
+        "secondary-foreground/secondary": 13.0,
+        "accent-foreground/accent": 13.0,
+        "destructive-foreground/destructive": 6.17,
+        "primary/background": 9.23,
+        "ring/background": 9.23,
+        "border/background": 2.46
+      }
+    },
+    "seeds": [
+      {
+        "oklch": "oklch(0.980 0.008 65)",
+        "hex": "#FCF7F3"
+      },
+      {
+        "oklch": "oklch(1.000 0.000 0)",
+        "hex": "#FFFFFF"
+      },
+      {
+        "oklch": "oklch(0.490 0.140 42)",
+        "hex": "#9E3E0E"
+      },
+      {
+        "oklch": "oklch(0.850 0.070 42)",
+        "hex": "#F6BFAA"
+      },
+      {
+        "oklch": "oklch(0.220 0.015 65)",
+        "hex": "#201913"
+      }
+    ]
+  },
+  {
+    "name": "Солнечный двор",
+    "vibe": "Авторская · охра и сливочный фон",
+    "light": {
+      "background": "oklch(0.980 0.015 85)",
+      "foreground": "oklch(0.220 0.015 85)",
+      "card": "oklch(1.000 0.000 0)",
+      "card-foreground": "oklch(0.220 0.015 85)",
+      "popover": "oklch(1.000 0.000 0)",
+      "popover-foreground": "oklch(0.220 0.015 85)",
+      "primary": "oklch(0.460 0.105 70)",
+      "primary-foreground": "oklch(0.990 0.000 0)",
+      "secondary": "oklch(0.940 0.020 85)",
+      "secondary-foreground": "oklch(0.220 0.015 85)",
+      "muted": "oklch(0.950 0.015 85)",
+      "muted-foreground": "oklch(0.440 0.014 85)",
+      "accent": "oklch(0.940 0.020 85)",
+      "accent-foreground": "oklch(0.220 0.015 85)",
+      "destructive": "oklch(0.510 0.190 25)",
+      "destructive-foreground": "oklch(0.990 0.000 0)",
+      "border": "oklch(0.800 0.015 85)",
+      "input": "oklch(1.000 0.000 0)",
+      "ring": "oklch(0.460 0.105 70)",
+      "radius": ".75rem"
+    },
+    "dark": {
+      "background": "oklch(0.170 0.015 85)",
+      "foreground": "oklch(0.960 0.015 85)",
+      "card": "oklch(0.220 0.015 85)",
+      "card-foreground": "oklch(0.960 0.015 85)",
+      "popover": "oklch(0.220 0.015 85)",
+      "popover-foreground": "oklch(0.960 0.015 85)",
+      "primary": "oklch(0.780 0.079 70)",
+      "primary-foreground": "oklch(0.160 0.005 85)",
+      "secondary": "oklch(0.280 0.020 85)",
+      "secondary-foreground": "oklch(0.960 0.015 85)",
+      "muted": "oklch(0.260 0.015 85)",
+      "muted-foreground": "oklch(0.760 0.012 85)",
+      "accent": "oklch(0.280 0.020 85)",
+      "accent-foreground": "oklch(0.960 0.015 85)",
+      "destructive": "oklch(0.510 0.190 25)",
+      "destructive-foreground": "oklch(0.990 0.000 0)",
+      "border": "oklch(0.440 0.015 85)",
+      "input": "oklch(0.220 0.015 85)",
+      "ring": "oklch(0.780 0.079 70)",
+      "radius": ".75rem"
+    },
+    "checks": {
+      "light": {
+        "foreground/background": 16.35,
+        "foreground/card": 17.32,
+        "foreground/popover": 17.32,
+        "foreground/muted": 14.96,
+        "muted-foreground/background": 7.33,
+        "muted-foreground/card": 7.77,
+        "muted-foreground/muted": 6.71,
+        "primary-foreground/primary": 7.08,
+        "secondary-foreground/secondary": 14.52,
+        "accent-foreground/accent": 14.52,
+        "destructive-foreground/destructive": 6.17,
+        "primary/background": 6.88,
+        "ring/background": 6.88,
+        "border/background": 1.76
+      },
+      "dark": {
+        "foreground/background": 17.03,
+        "foreground/card": 15.42,
+        "foreground/popover": 15.42,
+        "foreground/muted": 13.84,
+        "muted-foreground/background": 8.91,
+        "muted-foreground/card": 8.06,
+        "muted-foreground/muted": 7.24,
+        "primary-foreground/primary": 9.59,
+        "secondary-foreground/secondary": 13.0,
+        "accent-foreground/accent": 13.0,
+        "destructive-foreground/destructive": 6.17,
+        "primary/background": 9.45,
+        "ring/background": 9.45,
+        "border/background": 2.46
+      }
+    },
+    "seeds": [
+      {
+        "oklch": "oklch(0.980 0.015 85)",
+        "hex": "#FDF8ED"
+      },
+      {
+        "oklch": "oklch(1.000 0.000 0)",
+        "hex": "#FFFFFF"
+      },
+      {
+        "oklch": "oklch(0.460 0.105 70)",
+        "hex": "#7C4B00"
+      },
+      {
+        "oklch": "oklch(0.850 0.052 70)",
+        "hex": "#E5C8A9"
+      },
+      {
+        "oklch": "oklch(0.220 0.015 85)",
+        "hex": "#1E1A13"
+      }
+    ]
+  },
+  {
+    "name": "Зелёный квартал",
+    "vibe": "Авторская · шалфей и тёплая бумага",
+    "light": {
+      "background": "oklch(0.980 0.008 85)",
+      "foreground": "oklch(0.220 0.015 85)",
+      "card": "oklch(1.000 0.000 0)",
+      "card-foreground": "oklch(0.220 0.015 85)",
+      "popover": "oklch(1.000 0.000 0)",
+      "popover-foreground": "oklch(0.220 0.015 85)",
+      "primary": "oklch(0.430 0.075 150)",
+      "primary-foreground": "oklch(0.990 0.000 0)",
+      "secondary": "oklch(0.940 0.013 85)",
+      "secondary-foreground": "oklch(0.220 0.015 85)",
+      "muted": "oklch(0.950 0.008 85)",
+      "muted-foreground": "oklch(0.440 0.014 85)",
+      "accent": "oklch(0.940 0.013 85)",
+      "accent-foreground": "oklch(0.220 0.015 85)",
+      "destructive": "oklch(0.510 0.190 25)",
+      "destructive-foreground": "oklch(0.990 0.000 0)",
+      "border": "oklch(0.800 0.008 85)",
+      "input": "oklch(1.000 0.000 0)",
+      "ring": "oklch(0.430 0.075 150)",
+      "radius": ".75rem"
+    },
+    "dark": {
+      "background": "oklch(0.170 0.008 85)",
+      "foreground": "oklch(0.960 0.008 85)",
+      "card": "oklch(0.220 0.008 85)",
+      "card-foreground": "oklch(0.960 0.008 85)",
+      "popover": "oklch(0.220 0.008 85)",
+      "popover-foreground": "oklch(0.960 0.008 85)",
+      "primary": "oklch(0.780 0.056 150)",
+      "primary-foreground": "oklch(0.160 0.005 85)",
+      "secondary": "oklch(0.280 0.013 85)",
+      "secondary-foreground": "oklch(0.960 0.008 85)",
+      "muted": "oklch(0.260 0.008 85)",
+      "muted-foreground": "oklch(0.760 0.012 85)",
+      "accent": "oklch(0.280 0.013 85)",
+      "accent-foreground": "oklch(0.960 0.008 85)",
+      "destructive": "oklch(0.510 0.190 25)",
+      "destructive-foreground": "oklch(0.990 0.000 0)",
+      "border": "oklch(0.440 0.008 85)",
+      "input": "oklch(0.220 0.008 85)",
+      "ring": "oklch(0.780 0.056 150)",
+      "radius": ".75rem"
+    },
+    "checks": {
+      "light": {
+        "foreground/background": 16.35,
+        "foreground/card": 17.32,
+        "foreground/popover": 17.32,
+        "foreground/muted": 14.96,
+        "muted-foreground/background": 7.33,
+        "muted-foreground/card": 7.77,
+        "muted-foreground/muted": 6.71,
+        "primary-foreground/primary": 7.6,
+        "secondary-foreground/secondary": 14.52,
+        "accent-foreground/accent": 14.52,
+        "destructive-foreground/destructive": 6.17,
+        "primary/background": 7.39,
+        "ring/background": 7.39,
+        "border/background": 1.76
+      },
+      "dark": {
+        "foreground/background": 17.02,
+        "foreground/card": 15.41,
+        "foreground/popover": 15.41,
+        "foreground/muted": 13.83,
+        "muted-foreground/background": 8.9,
+        "muted-foreground/card": 8.06,
+        "muted-foreground/muted": 7.24,
+        "primary-foreground/primary": 9.92,
+        "secondary-foreground/secondary": 12.99,
+        "accent-foreground/accent": 12.99,
+        "destructive-foreground/destructive": 6.17,
+        "primary/background": 9.77,
+        "ring/background": 9.77,
+        "border/background": 2.46
+      }
+    },
+    "seeds": [
+      {
+        "oklch": "oklch(0.980 0.008 85)",
+        "hex": "#FBF8F2"
+      },
+      {
+        "oklch": "oklch(1.000 0.000 0)",
+        "hex": "#FFFFFF"
+      },
+      {
+        "oklch": "oklch(0.430 0.075 150)",
+        "hex": "#2F5B39"
+      },
+      {
+        "oklch": "oklch(0.850 0.037 150)",
+        "hex": "#BDD5C1"
+      },
+      {
+        "oklch": "oklch(0.220 0.015 85)",
+        "hex": "#1E1A13"
+      }
+    ]
+  }
+]

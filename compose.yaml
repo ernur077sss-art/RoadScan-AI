@@ -1,0 +1,53 @@
+# Local development only. Production requires the configuration described in docs/OPERATIONS.md.
+name: roadscan
+services:
+  db:
+    image: postgis/postgis:17-3.5
+    environment:
+      POSTGRES_DB: roadscan
+      POSTGRES_USER: roadscan
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-roadscan-local-only}
+    ports: ["127.0.0.1:5432:5432"]
+    volumes: ["database:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U roadscan"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    environment: &api-env
+      ROADSCAN_ENV: development
+      ROADSCAN_DATABASE_URL: postgresql+psycopg://roadscan:${POSTGRES_PASSWORD:-roadscan-local-only}@db:5432/roadscan
+      ROADSCAN_ORIGIN: http://localhost:3000
+      ROADSCAN_SMS_MODE: development
+      ROADSCAN_109_MODE: ${ROADSCAN_109_MODE:-disabled}
+      ROADSCAN_STORAGE: local
+    volumes: ["media:/app/.data"]
+    ports: ["127.0.0.1:8000:8000"]
+    depends_on:
+      db: {condition: service_healthy}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    environment: *api-env
+    volumes: ["media:/app/.data"]
+    command: ["python", "-m", "api.worker"]
+    depends_on:
+      api: {condition: service_healthy}
+  web:
+    build: ./web
+    ports: ["127.0.0.1:3000:3000"]
+    depends_on:
+      api: {condition: service_healthy}
+volumes:
+  database:
+  media:

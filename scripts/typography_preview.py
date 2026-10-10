@@ -1,0 +1,16 @@
+from pathlib import Path
+import json
+
+root = Path(__file__).resolve().parents[1]
+p = json.loads((root/'.brand-preview/palettes.json').read_text())[5]
+def tokens(theme):
+    return '\n'.join('  --'+k+': '+v+';' for k,v in p[theme].items())
+fonts = [('Manrope','JetBrains Mono','', 'Мягкая геометрия'),('Inter','JetBrains Mono','PT Serif','Тёплый редакционный стиль'),('Rubik','JetBrains Mono','','Открытый и дружелюбный'),('Inter','JetBrains Mono','Literata','Характер в заголовках'),('Inter','JetBrains Mono','','Спокойная ясность'),('IBM Plex Sans','IBM Plex Mono','','Уверенный городской сервис')]
+link = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=PT+Serif:wght@400;700&family=Rubik:wght@400;500;600;700&family=Literata:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap'
+cards=[]
+for i,(sans,mono,serif,vibe) in enumerate(fonts):
+    name = (serif+' + ' if serif else '')+sans+' + '+mono
+    cards.append(f'''<article style="--sans:'{sans}',sans-serif;--mono:'{mono}',monospace;--display:'{serif or sans}',sans-serif"><small>0{i+1} · {vibe}</small><h2>{name}</h2><div class="sample"><h3>Наш город. Наше внимание.</h3><p>Заметили яму или повреждённый люк? Отправьте фото и отметьте место на карте. Инспектор проверит обращение и ответит здесь.</p><button>Сообщить о проблеме</button><div class="numbers">НК-000123 · 12 октября, 14:30</div><p>Обращение получено · требуется уточнение</p></div></article>''')
+html='''<!doctype html><html lang="ru"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Народный контроль · типографика</title><link rel="stylesheet" href="'''+link+'''"><style>:root{'''+tokens('light')+'''}*{box-sizing:border-box}body{margin:0;background:var(--background);color:var(--foreground);font:16px/1.6 Inter,system-ui}header{padding:32px;max-width:1000px;margin:auto}h1{font-size:26px;margin:0}main{max-width:1000px;margin:auto;padding:0 24px 48px;display:grid;gap:24px}article{background:var(--card);padding:28px;border:1px solid var(--border);border-radius:16px}small{color:var(--muted-foreground)}h2{font:600 17px Inter,system-ui}.sample{font-family:var(--sans);max-width:680px}h3{font-family:var(--display);font-size:36px;line-height:1.2;margin:28px 0 16px}button{background:var(--primary);color:var(--primary-foreground);font:600 16px var(--sans);padding:16px 20px;border:0;border-radius:12px}.numbers{font:14px var(--mono);margin-top:24px}</style><header><h1>Выберите характер текста</h1><p>Палитра «Зелёный квартал» · 6 вариантов с кириллицей · примеры интерфейса</p><button id="toggle">Тёмная тема</button></header><main>'''+''.join(cards)+'''</main><script>const themes='''+json.dumps({'light':p['light'],'dark':p['dark']})+''';let dark=false;document.getElementById('toggle').onclick=()=>{dark=!dark;for(const[k,v]of Object.entries(themes[dark?'dark':'light']))document.documentElement.style.setProperty('--'+k,v);document.getElementById('toggle').textContent=dark?'Светлая тема':'Тёмная тема'}</script></html>'''
+(root/'.brand-preview/typography.html').write_text(html)
+print('Typography preview regenerated. Application CSS and brand.md were not changed.')

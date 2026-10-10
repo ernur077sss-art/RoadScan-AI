@@ -42,9 +42,17 @@ jobs:
       - run: npm install -g pnpm@11.25.0
       - run: pnpm install --frozen-lockfile
         working-directory: web
-      - run: pnpm typecheck && pnpm build
+      - run: pnpm test:config && pnpm typecheck && pnpm build
         working-directory: web
         env: {NEXT_TELEMETRY_DISABLED: '1'}
+      - name: Build with Vercel configuration (no deployment)
+        run: pnpm build
+        working-directory: web
+        env:
+          VERCEL: '1'
+          # Build-only fixture; this job never connects to or deploys an API.
+          API_INTERNAL_URL: https://api.roadscan-ci.vercel.app
+          NEXT_TELEMETRY_DISABLED: '1'
       - run: pnpm exec playwright install --with-deps chromium
         working-directory: web
       - run: pnpm test:e2e

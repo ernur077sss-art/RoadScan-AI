@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
+import { apiOrigin } from "./scripts/deployment-config.mjs";
+const backend = apiOrigin();
 const config: NextConfig = {
-  output: "standalone",
+  // Vercel uses its Next.js adapter; standalone remains available for Docker/local use.
+  output: process.env.VERCEL === "1" ? undefined : "standalone",
   poweredByHeader: false,
   devIndicators: false,
   experimental: { proxyClientMaxBodySize: "26mb" },
@@ -8,7 +11,7 @@ const config: NextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: `${process.env.API_INTERNAL_URL || "http://127.0.0.1:8000"}/api/:path*`,
+        destination: `${backend}/api/:path*`,
       },
     ];
   },
@@ -24,6 +27,14 @@ const config: NextConfig = {
             key: "Permissions-Policy",
             value: "camera=(self), geolocation=(self), microphone=()",
           },
+        ],
+      },
+      {
+        source: "/api/:path*",
+        headers: [
+          { key: "Cache-Control", value: "private, no-store" },
+          { key: "CDN-Cache-Control", value: "no-store" },
+          { key: "Vercel-CDN-Cache-Control", value: "no-store" },
         ],
       },
       {

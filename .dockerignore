@@ -1,7 +1,10 @@
 .git
+**/.vercel
 .venv
+.pnpm-store
 .data
 .env*
+**/.env*
 web/node_modules
 web/.next
 .brand-preview

@@ -2,11 +2,16 @@
   "name": "narodny-kontrol",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@11.25.0",
+  "engines": {
+    "node": "24.x"
+  },
   "scripts": {
     "dev": "next dev --hostname 127.0.0.1",
     "build": "next build",
     "start": "node scripts/start.mjs",
     "typecheck": "tsc --noEmit",
+    "test:config": "node --test scripts/deployment-config.test.mjs",
     "test:e2e": "playwright test",
     "format": "prettier --write app components lib e2e scripts *.ts *.mjs *.json",
     "format:check": "prettier --check app components lib e2e scripts *.ts *.mjs *.json"

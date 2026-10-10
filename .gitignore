@@ -4,7 +4,9 @@
 .env.*
 !.env.example
 node_modules/
+.pnpm-store/
 .next/
+.vercel/
 __pycache__/
 .pytest_cache/
 *.pyc

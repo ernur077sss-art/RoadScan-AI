@@ -1,4 +1,7 @@
 node_modules
+.env*
+.vercel
+.pnpm-store
 .next
 test-results
 playwright-report

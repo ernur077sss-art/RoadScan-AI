@@ -7,7 +7,7 @@
 
 > Городской сервис для жителей и инспекторов: сообщить о дорожном дефекте, приложить фото или видео, отметить место на карте и получить ответ в одном приложении.
 
-[Сценарий демо](docs/DEMO.md) · [Документация](docs/) · [Архитектура](docs/ARCHITECTURE.md) · [План разработки](docs/PLAN.md) · [Быстрый запуск](#quick-start) · [Деплой на Vercel](docs/DEPLOY_VERCEL.md)
+[Презентация G-TON](docs/pitch/README.md) · [Сценарий демо](docs/DEMO.md) · [Документация](docs/) · [Архитектура](docs/ARCHITECTURE.md) · [План разработки](docs/PLAN.md) · [Быстрый запуск](#quick-start) · [Деплой на Vercel](docs/DEPLOY_VERCEL.md)
 
 ---
 

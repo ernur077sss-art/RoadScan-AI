@@ -105,10 +105,17 @@ def test_production_password_mode_does_not_require_sms_but_keeps_storage_guards(
         settings.prepare()
 
 
-def test_production_password_cookie_is_secure(app, client):
+@pytest.mark.parametrize(('environment', 'origin'), [('production', 'http://localhost:3000'), ('development', 'https://phone-preview.example')])
+def test_production_and_https_preview_password_cookies_are_secure(app, client, environment, origin):
     app.state.settings.auth_mode = 'password'
-    app.state.settings.environment = 'production'
-    result = register(client)
+    app.state.settings.environment = environment
+    app.state.settings.origin = origin
+    with TestClient(app, base_url=origin, headers={'origin': origin, 'x-roadscan-request': '1'}) as preview:
+        result = register(preview)
+        if origin.startswith('https://'):
+            assert preview.get('/api/auth/me').status_code == 200
+            assert preview.post('/api/auth/logout', headers={'origin': 'https://wrong.example'}).status_code == 403
+            assert preview.post('/api/auth/logout').status_code == 200
     assert result.status_code == 201
     cookie = result.headers['set-cookie'].lower()
     assert 'secure' in cookie and 'httponly' in cookie and 'samesite=lax' in cookie

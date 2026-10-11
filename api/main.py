@@ -140,7 +140,7 @@ def create_app(settings=None):
         token = secrets.token_urlsafe(48)
         db.add(Session(token_hash=digest(settings, 'session:' + token), user_id=user.id, expires_at=now() + 30 * 86400))
         db.commit()
-        response.set_cookie('roadscan_session', token, max_age=30 * 86400, httponly=True, secure=settings.environment == 'production', samesite='lax', path='/')
+        response.set_cookie('roadscan_session', token, max_age=30 * 86400, httponly=True, secure=settings.environment == 'production' or settings.origin.startswith('https://'), samesite='lax', path='/')
         return {'id': user.id, 'role': user.role}
 
     def password_limits(phone, request, db, registering=False):

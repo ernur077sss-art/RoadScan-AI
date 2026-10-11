@@ -16,9 +16,10 @@ def register(client, phone=PHONE, **extra):
     return client.post('/api/auth/register', json={'phone': phone, 'password': PASSWORD, 'consent': True, **extra})
 
 
-def test_password_registration_login_and_private_report_survive_restart(app, client):
+@pytest.mark.parametrize('password', [PASSWORD, '0042'])
+def test_password_registration_login_and_private_report_survive_restart(app, client, password):
     app.state.settings.auth_mode = 'password'
-    result = register(client)
+    result = register(client, password=password)
     assert result.status_code == 201, result.text
     user_id = result.json()['id']
     first_cookie = client.cookies.get('roadscan_session')
@@ -27,14 +28,15 @@ def test_password_registration_login_and_private_report_survive_restart(app, cli
     row = report(client)
     with app.state.sessions() as db:
         user = db.get(User, user_id)
-        assert PASSWORD not in user.password_hash
+        assert password != user.password_hash
+        assert verify_password(password, user.password_hash)
         assert PHONE not in user.phone_encrypted
         assert user.role == 'citizen'
     assert client.post('/api/auth/logout').status_code == 200
     assert client.get('/api/auth/me').status_code == 401
     restarted = create_app(app.state.settings)
     with TestClient(restarted, headers=HEADERS) as restored:
-        assert restored.post('/api/auth/login', json={'phone': PHONE, 'password': PASSWORD}).status_code == 200
+        assert restored.post('/api/auth/login', json={'phone': PHONE, 'password': password}).status_code == 200
         assert restored.cookies.get('roadscan_session') != first_cookie
         assert restored.get('/api/reports/' + row['id']).status_code == 200
         assert restored.get('/api/inspector/reports').status_code == 403
@@ -92,6 +94,64 @@ def test_hashes_are_salted_and_preserve_unicode_and_whitespace():
     assert not verify_password(PASSWORD.strip(), first)
     assert not verify_password(PASSWORD, None)
     assert not verify_password(PASSWORD, 'broken')
+
+
+def test_pin_registration_rejects_other_short_values(app, client):
+    app.state.settings.auth_mode = 'password'
+    for password in ['123', '12345', 'abcd', '12a4', '１２３４', ' 1234', '1234 ', '1234\n', 'a' * 14, 'a' * 129]:
+        response = register(client, password=password)
+        assert response.status_code == 422
+        assert 'input' not in str(response.json())
+    assert register(client, password='0000').status_code == 201
+
+
+def test_pin_daily_guess_limit_survives_restart_and_phone_format_changes(app, client, monkeypatch):
+    stamp = [172801]
+    monkeypatch.setattr('api.security.now', lambda: stamp[0])
+    app.state.settings.auth_mode = 'password'
+    assert register(client, password='0042').status_code == 201
+    assert client.post('/api/auth/logout').status_code == 200
+    for attempt in range(19):
+        stamp[0] += 901  # A new short window must not reset the daily quota.
+        number = PHONE if attempt % 2 else '87010000001'
+        assert client.post('/api/auth/login', json={'phone': number, 'password': '9999'}).status_code == 401
+    restarted = create_app(app.state.settings)
+    with TestClient(restarted, headers=HEADERS) as restored:
+        blocked = restored.post('/api/auth/login', json={'phone': PHONE, 'password': '0042'})
+        assert blocked.status_code == 429
+        assert 'retry-after' in blocked.headers
+
+
+def test_pin_cannot_receive_staff_role_through_api_or_cli(app, client, monkeypatch):
+    import sys
+    from api import manage
+    app.state.settings.auth_mode = 'password'
+    admin_id = register(client).json()['id']
+    with app.state.sessions() as db:
+        db.get(User, admin_id).role = 'admin'
+        db.commit()
+    with TestClient(app, headers=HEADERS) as resident:
+        pin_phone = '+77010000002'
+        response = register(resident, phone=pin_phone, password='0042')
+        assert response.status_code == 201
+        pin_id = response.json()['id']
+        for role in ['inspector', 'admin']:
+            result = client.post('/api/admin/users/' + pin_id + '/role', json={'role': role})
+            assert result.status_code == 422
+            monkeypatch.setattr(sys, 'argv', ['manage', 'grant-role', '--phone', pin_phone, '--role', role])
+            monkeypatch.setattr(manage, 'Settings', lambda: app.state.settings)
+            with pytest.raises(SystemExit) as exc:
+                manage.main()
+            assert exc.value.code == 2
+        with app.state.sessions() as db:
+            assert db.get(User, pin_id).role == 'citizen'
+            # Even an incorrectly changed database row cannot reuse a PIN session as staff.
+            db.get(User, pin_id).role = 'inspector'
+            db.commit()
+        assert resident.get('/api/inspector/reports').status_code == 403
+        denied = resident.post('/api/auth/login', json={'phone': pin_phone, 'password': '0042'})
+        assert denied.status_code == 403
+        assert 'set-cookie' not in denied.headers
 
 
 def test_production_password_mode_does_not_require_sms_but_keeps_storage_guards(tmp_path):

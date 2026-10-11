@@ -183,6 +183,8 @@ export function Login() {
 
 function PasswordLogin() {
   const [registering, setRegistering] = useState(false);
+  const [longPassword, setLongPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [phone, setPhone] = useState("+7");
   const [password, setPassword] = useState("");
   const [confirmation, setConfirmation] = useState("");
@@ -192,12 +194,16 @@ function PasswordLogin() {
   const { refresh } = useAuth();
   const router = useRouter();
   const params = useSearchParams();
-  async function submit(e: FormEvent) {
+  const pinRegistration = registering && !longPassword;
+  async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (busy) return;
     setError("");
     if (registering && password !== confirmation) {
       setError("Пароли не совпадают");
+      (
+        e.currentTarget.elements.namedItem("confirmation") as HTMLInputElement
+      )?.focus();
       return;
     }
     setBusy(true);
@@ -248,7 +254,7 @@ function PasswordLogin() {
         <h2>{registering ? "Создать аккаунт" : "Войти в свой аккаунт"}</h2>
         <p className="muted">
           {registering
-            ? "Укажите свой номер и придумайте пароль. SMS не требуется; владение номером не проверяется."
+            ? "Укажите свой номер и придумайте пароль. SMS не требуется."
             : "Номер телефона и пароль, указанные при регистрации."}
         </p>
         <form onSubmit={submit} aria-busy={busy}>
@@ -272,32 +278,62 @@ function PasswordLogin() {
             <input
               id="password"
               name="password"
-              type="password"
+              type={showPassword ? "text" : "password"}
+              inputMode={pinRegistration ? "numeric" : undefined}
               autoComplete={registering ? "new-password" : "current-password"}
+              spellCheck={false}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              minLength={registering ? 15 : 1}
-              maxLength={128}
+              minLength={registering ? (pinRegistration ? 4 : 15) : 1}
+              maxLength={pinRegistration ? 4 : 128}
+              pattern={pinRegistration ? "[0-9]{4}" : undefined}
+              title={pinRegistration ? "Введите ровно 4 цифры" : undefined}
               aria-describedby={registering ? "password-hint" : undefined}
             />
             {registering && (
               <>
                 <p id="password-hint" className="muted">
-                  От 15 символов. Можно использовать длинную фразу. Сохраните
-                  пароль: восстановление через SMS недоступно.
+                  {pinRegistration
+                    ? "Придумайте 4 цифры — это ваш постоянный PIN для входа."
+                    : "От 15 символов. Можно использовать длинную фразу."}{" "}
+                  Сохраните пароль: восстановление через SMS недоступно.
                 </p>
+                <button
+                  type="button"
+                  className="text-button"
+                  onClick={() => {
+                    setLongPassword(!longPassword);
+                    setPassword("");
+                    setConfirmation("");
+                    setError("");
+                  }}
+                >
+                  {longPassword
+                    ? "Использовать PIN из 4 цифр"
+                    : "Использовать длинный пароль"}
+                </button>
                 <label htmlFor="confirmation">Повторите пароль</label>
                 <input
                   id="confirmation"
                   name="confirmation"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
+                  inputMode={pinRegistration ? "numeric" : undefined}
                   autoComplete="new-password"
+                  spellCheck={false}
                   value={confirmation}
                   onChange={(e) => setConfirmation(e.target.value)}
                   required
-                  minLength={15}
-                  maxLength={128}
+                  minLength={pinRegistration ? 4 : 15}
+                  maxLength={pinRegistration ? 4 : 128}
+                  pattern={pinRegistration ? "[0-9]{4}" : undefined}
+                  title={pinRegistration ? "Введите ровно 4 цифры" : undefined}
+                  aria-invalid={error === "Пароли не совпадают" || undefined}
+                  aria-describedby={
+                    error === "Пароли не совпадают"
+                      ? "password-form-error"
+                      : undefined
+                  }
                 />
                 <label className="checkbox-row">
                   <input
@@ -313,7 +349,17 @@ function PasswordLogin() {
                 </label>
               </>
             )}
-            <ErrorBox message={error} />
+            <button
+              type="button"
+              className="text-button"
+              aria-pressed={showPassword}
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? "Скрыть пароль" : "Показать пароль"}
+            </button>
+            <div id="password-form-error">
+              <ErrorBox message={error} />
+            </div>
             <button
               className="button full"
               disabled={busy || (registering && !consent)}
@@ -330,6 +376,8 @@ function PasswordLogin() {
           disabled={busy}
           onClick={() => {
             setRegistering(!registering);
+            setLongPassword(false);
+            setShowPassword(false);
             setError("");
             setPassword("");
             setConfirmation("");

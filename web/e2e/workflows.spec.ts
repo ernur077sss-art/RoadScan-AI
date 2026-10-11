@@ -7,16 +7,32 @@ function phone() {
     "+7702" + String(Math.floor(Math.random() * 10000000)).padStart(7, "0")
   );
 }
-async function login(page: Page, number = phone()) {
+async function login(
+  page: Page,
+  number = phone(),
+  password = "Тестовый пароль для E2E!",
+) {
   await page.goto("/login");
   await page
     .getByRole("button", { name: "Нет аккаунта? Зарегистрироваться" })
     .click();
+  if (password.length > 4) {
+    await page
+      .getByRole("button", { name: "Использовать длинный пароль", exact: true })
+      .click();
+  } else {
+    await expect(page.getByLabel("Пароль", { exact: true })).toHaveAttribute(
+      "inputmode",
+      "numeric",
+    );
+    await expect(page.getByLabel("Пароль", { exact: true })).toHaveAttribute(
+      "maxlength",
+      "4",
+    );
+  }
   await page.getByLabel("Номер телефона").fill(number);
-  await page
-    .getByLabel("Пароль", { exact: true })
-    .fill("Тестовый пароль для E2E!");
-  await page.getByLabel("Повторите пароль").fill("Тестовый пароль для E2E!");
+  await page.getByLabel("Пароль", { exact: true }).fill(password);
+  await page.getByLabel("Повторите пароль").fill(password);
   await page.getByRole("checkbox").check();
   await page
     .getByRole("button", { name: "Зарегистрироваться", exact: true })
@@ -58,9 +74,11 @@ async function noOverflow(page: Page) {
 }
 const headers = { Origin: "http://localhost:3100", "X-RoadScan-Request": "1" };
 
-test("вход с паролем после выхода", async ({ page }) => {
+test("PIN из четырёх цифр с ведущими нулями и повторный вход", async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 375, height: 812 });
-  const number = await login(page);
+  const number = await login(page, phone(), "0042");
   expect(
     (await page.request.post("/api/auth/logout", { headers })).status(),
   ).toBe(200);
@@ -73,9 +91,7 @@ test("вход с паролем после выхода", async ({ page }) => {
   await expect(page.locator(".auth-card").getByRole("alert")).toContainText(
     "Неверный номер телефона или пароль",
   );
-  await page
-    .getByLabel("Пароль", { exact: true })
-    .fill("Тестовый пароль для E2E!");
+  await page.getByLabel("Пароль", { exact: true }).fill("0042");
   await page.getByRole("button", { name: "Войти", exact: true }).click();
   await expect(page).toHaveURL(/\/reports\/new$/);
   await noOverflow(page);

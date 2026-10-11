@@ -1,6 +1,7 @@
 from typing import Literal
 from uuid import UUID
-from pydantic import BaseModel, Field, ConfigDict, model_validator
+from pydantic import BaseModel, Field, ConfigDict, field_validator, model_validator
+from .passwords import is_pin
 
 Category = Literal['pothole', 'surface', 'manhole', 'other']
 
@@ -27,8 +28,15 @@ class PasswordLogin(Strict):
 
 
 class PasswordRegistration(PasswordLogin):
-    password: str = Field(min_length=15, max_length=128)
+    password: str = Field(min_length=4, max_length=128)
     consent: Literal[True]
+
+    @field_validator('password')
+    @classmethod
+    def valid_password(cls, value):
+        if not is_pin(value) and len(value) < 15:
+            raise ValueError('Используйте PIN из 4 цифр или пароль от 15 символов.')
+        return value
 
 
 class Coordinates(Strict):

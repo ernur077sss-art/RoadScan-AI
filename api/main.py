@@ -18,7 +18,7 @@ from .db import connect, initialize, lock_key
 from .models import User, Challenge, Session, Media, Observation, Incident, Audit, Outbox, now, uid
 from .schemas import PhoneRequest, VerifyRequest, PasswordLogin, PasswordRegistration, ReportRequest, Decision, Clarification, RoleRequest, LocationUpdate
 from .security import normalize_phone, digest, cipher, limit
-from .passwords import hash_password, verify_password
+from .passwords import hash_password, verify_password, validate_role_password
 from .storage import Storage, validate_media
 
 
@@ -40,6 +40,10 @@ def current_user(request: Request, db: DbSession = Depends(get_db)):
     user = db.get(User, session.user_id)
     if not user:
         raise HTTPException(401, 'Сессия завершена')
+    try:
+        validate_role_password(user.password_hash, user.role)
+    except ValueError as exc:
+        raise HTTPException(403, str(exc)) from None
     return user
 
 
@@ -147,6 +151,7 @@ def create_app(settings=None):
         ip = request.client.host if request.client else 'unknown'
         limit(db, settings, 'password-ip:' + ip, 30, 900)
         limit(db, settings, 'password-phone:' + phone, 5, 900)
+        limit(db, settings, 'password-phone-day:' + phone, 20, 86400)
         if registering:
             limit(db, settings, 'registration-ip:' + ip, 10, 3600)
         # Persist unsuccessful attempts as well; release locks before scrypt.
@@ -179,6 +184,10 @@ def create_app(settings=None):
         user = db.scalar(select(User).where(User.phone_key == digest(settings, 'phone:' + phone)))
         if not verify_password(body.password, user.password_hash if user else None):
             raise HTTPException(401, 'Неверный номер телефона или пароль')
+        try:
+            validate_role_password(user.password_hash, user.role)
+        except ValueError as exc:
+            raise HTTPException(403, str(exc)) from None
         return start_session(user, request, response, db)
 
     @app.post('/api/auth/request')
@@ -479,6 +488,10 @@ def create_app(settings=None):
         target = db.get(User, str(user_id))
         if not target or target.id == user.id:
             raise HTTPException(422, 'Нельзя изменить собственную роль или неизвестного пользователя')
+        try:
+            validate_role_password(target.password_hash, body.role)
+        except ValueError as exc:
+            raise HTTPException(422, str(exc)) from None
         old_role, target.role = target.role, body.role
         audit(db, user, None, 'role_changed', 'Изменена роль пользователя', {'user_id': target.id, 'before': old_role, 'after': body.role})
         db.commit()

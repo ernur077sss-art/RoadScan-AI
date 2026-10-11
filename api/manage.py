@@ -4,6 +4,7 @@ from .config import Settings
 from .db import connect, initialize
 from .models import User, Audit
 from .security import normalize_phone, digest, cipher
+from .passwords import validate_role_password
 
 
 def main():
@@ -27,6 +28,10 @@ def main():
         user = db.scalar(select(User).where(User.phone_key == key))
         if not user:
             parser.error('User must sign in and accept consent first')
+        try:
+            validate_role_password(user.password_hash, args.role)
+        except ValueError as exc:
+            parser.error(str(exc))
         old = user.role
         user.role = args.role
         db.add(Audit(action='operator_role_changed', note='Role updated by host operator', details='{"user_id":"' + user.id + '","before":"' + old + '","after":"' + args.role + '"}'))

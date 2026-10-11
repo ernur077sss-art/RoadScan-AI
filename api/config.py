@@ -2,12 +2,15 @@ from dataclasses import dataclass, field
 from pathlib import Path
 import os
 import secrets
+from sqlalchemy.engine import make_url
+from sqlalchemy.exc import ArgumentError
 
 
 @dataclass
 class Settings:
     environment: str = field(default_factory=lambda: os.getenv('ROADSCAN_ENV', 'development'))
-    database_url: str = field(default_factory=lambda: os.getenv('ROADSCAN_DATABASE_URL', 'sqlite:///./.data/roadscan.db'))
+    database_url: str = field(default_factory=lambda: os.getenv('ROADSCAN_DATABASE_URL', 'sqlite:///./.data/roadscan.db'), repr=False)
+    database_password: str = field(default_factory=lambda: os.getenv('ROADSCAN_DATABASE_PASSWORD', ''), repr=False)
     origin: str = field(default_factory=lambda: os.getenv('ROADSCAN_ORIGIN', 'http://localhost:3000'))
     data_dir: Path = field(default_factory=lambda: Path(os.getenv('ROADSCAN_DATA_DIR', '.data')))
     secret: str = field(default_factory=lambda: os.getenv('ROADSCAN_SECRET', ''))
@@ -22,6 +25,16 @@ class Settings:
     max_upload: int = 25 * 1024 * 1024
 
     def prepare(self):
+        # Hosting dashboards can store the raw password separately, avoiding
+        # manual URL encoding of characters such as @, /, # and %.
+        if self.database_password:
+            try:
+                database_url = make_url(self.database_url)
+            except ArgumentError:
+                raise ValueError('ROADSCAN_DATABASE_URL must be a valid PostgreSQL URL') from None
+            if database_url.get_backend_name() != 'postgresql':
+                raise ValueError('ROADSCAN_DATABASE_PASSWORD requires PostgreSQL')
+            self.database_url = database_url.set(password=self.database_password).render_as_string(hide_password=False)
         if self.environment not in {'development', 'test', 'production'}:
             raise ValueError('Unknown ROADSCAN_ENV')
         if self.sms_mode not in {'development', 'bridge'}:

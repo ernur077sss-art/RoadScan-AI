@@ -2,12 +2,36 @@ from urllib.parse import urlparse, parse_qs
 from pathlib import Path
 from alembic import command
 from alembic.config import Config
+import pytest
 
 from sqlalchemy import create_engine, text
 
 from api.config import Settings
 from api.migrate import upgrade
 from api.storage import Storage
+
+
+def test_separate_database_password_reaches_driver_unchanged(tmp_path, monkeypatch):
+    password = '  test:@/%?#&+ пароль  '
+    monkeypatch.setenv('ROADSCAN_DATABASE_URL', 'postgresql+psycopg://postgres.project@pooler.test:5432/postgres?sslmode=require')
+    monkeypatch.setenv('ROADSCAN_DATABASE_PASSWORD', password)
+    settings = Settings(environment='test', data_dir=tmp_path).prepare()
+    # prepare runs both on API startup and before release migrations.
+    settings.prepare()
+    engine = create_engine(settings.database_url)
+    _, args = engine.dialect.create_connect_args(engine.url)
+    assert args['password'] == password
+    assert args['host'] == 'pooler.test'
+    assert args['user'] == 'postgres.project'
+    assert args['sslmode'] == 'require'
+    assert password not in repr(settings)
+    assert settings.database_url not in repr(settings)
+    engine.dispose()
+
+
+def test_separate_password_does_not_silently_change_sqlite_config(tmp_path):
+    with pytest.raises(ValueError, match='requires PostgreSQL'):
+        Settings(environment='test', data_dir=tmp_path, database_password='test-only').prepare()
 
 
 def test_release_migration_is_repeatable_and_preserves_existing_rows(tmp_path):

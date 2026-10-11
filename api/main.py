@@ -7,10 +7,10 @@ import json
 import secrets
 import tempfile
 import httpx
-from fastapi import FastAPI, Depends, HTTPException, Request, Response, UploadFile, File, Header
+from fastapi import FastAPI, Depends, HTTPException, Request, Response, UploadFile, File, Header, Query
 from fastapi.responses import FileResponse, StreamingResponse, JSONResponse
 from fastapi.exceptions import RequestValidationError
-from sqlalchemy import select, text, func
+from sqlalchemy import select, text, func, bindparam, BigInteger
 from sqlalchemy.orm import Session as DbSession
 from .body_limit import BodyLimitMiddleware, BodyTooLarge
 from .config import Settings
@@ -440,14 +440,16 @@ def create_app(settings=None):
         return [report_json(db, row) for row in rows]
 
     @app.get('/api/inspector/metrics')
-    def metrics(date_from: int | None = None, date_to: int | None = None, user=Depends(inspector), db=Depends(get_db)):
+    def metrics(date_from: int | None = Query(default=None, ge=0, le=253402300799), date_to: int | None = Query(default=None, ge=0, le=253402300799), user=Depends(inspector), db=Depends(get_db)):
         if date_from is not None and date_to is not None and date_from >= date_to:
             raise HTTPException(422, 'Неверный период')
         q = select(Incident).where(Incident.active.is_(True))
         if date_from is not None:
-            q = q.where(Incident.created_at >= date_from)
+            # psycopg casts inferred Integer binds to int32. A valid future
+            # filter can exceed that range even when stored dates do not.
+            q = q.where(Incident.created_at >= bindparam('date_from', date_from, type_=BigInteger))
         if date_to is not None:
-            q = q.where(Incident.created_at < date_to)
+            q = q.where(Incident.created_at < bindparam('date_to', date_to, type_=BigInteger))
         sub = q.subquery()
         total = db.scalar(select(func.count()).select_from(sub))
         verified = db.scalar(select(func.count()).select_from(sub).where(sub.c.location_verified.is_(True)))

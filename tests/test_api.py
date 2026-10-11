@@ -166,6 +166,9 @@ def test_kpi_unique_incidents_missing_geo_and_relink(client, app):
     b = decision(client, b, incident_id=a['incident_id']).json()
     assert client.get('/api/inspector/metrics').json()['incidents'] == 2
     assert client.get('/api/inspector/metrics?date_from=9999999999').json()['geolocation_percent'] is None
+    assert client.get('/api/inspector/metrics?date_to=9999999999').json()['incidents'] == 2
+    for query in ['date_from=-1', 'date_to=99999999999999999999', 'date_from=20&date_to=10']:
+        assert client.get('/api/inspector/metrics?' + query).status_code == 422
 
 
 def test_invalid_coordinates(client):

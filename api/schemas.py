@@ -19,6 +19,18 @@ class VerifyRequest(Strict):
     code: str = Field(pattern=r'^\d{6}$')
 
 
+class PasswordLogin(Strict):
+    # Whitespace is part of a password; never silently trim it.
+    model_config = ConfigDict(str_strip_whitespace=False)
+    phone: str = Field(max_length=30)
+    password: str = Field(min_length=1, max_length=128)
+
+
+class PasswordRegistration(PasswordLogin):
+    password: str = Field(min_length=15, max_length=128)
+    consent: Literal[True]
+
+
 class Coordinates(Strict):
     latitude: float | None = Field(default=None, ge=-90, le=90)
     longitude: float | None = Field(default=None, ge=-180, le=180)

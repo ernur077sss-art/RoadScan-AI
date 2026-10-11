@@ -146,9 +146,11 @@ export function Shell({ children }: { children: ReactNode }) {
         <div className="dev-banner">
           <span className="dev-dot" />
           Локальный пилот ·{" "}
-          {health.sms === "development"
-            ? "SMS заменены тестовым кодом"
-            : "SMS-провайдер настроен"}{" "}
+          {health.auth_mode === "password"
+            ? "Вход по телефону и паролю"
+            : health.sms === "development"
+              ? "SMS заменены тестовым кодом"
+              : "SMS-провайдер настроен"}{" "}
           · 109{" "}
           {health.integration_109 === "simulator"
             ? "в режиме симулятора"

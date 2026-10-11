@@ -16,8 +16,9 @@ from .body_limit import BodyLimitMiddleware, BodyTooLarge
 from .config import Settings
 from .db import connect, initialize, lock_key
 from .models import User, Challenge, Session, Media, Observation, Incident, Audit, Outbox, now, uid
-from .schemas import PhoneRequest, VerifyRequest, ReportRequest, Decision, Clarification, RoleRequest, LocationUpdate
+from .schemas import PhoneRequest, VerifyRequest, PasswordLogin, PasswordRegistration, ReportRequest, Decision, Clarification, RoleRequest, LocationUpdate
 from .security import normalize_phone, digest, cipher, limit
+from .passwords import hash_password, verify_password
 from .storage import Storage, validate_media
 
 
@@ -116,17 +117,73 @@ def create_app(settings=None):
 
     @app.exception_handler(RequestValidationError)
     async def validation_handler(request, exc):
-        # Do not echo OTPs, phones, or rejected request bodies.
+        # Do not echo passwords, OTPs, phones, or rejected request bodies.
         errors = [{'field': '.'.join(str(x) for x in e['loc'][1:]), 'message': e['msg']} for e in exc.errors()]
         return JSONResponse({'detail': 'Проверьте заполнение полей', 'errors': errors}, status_code=422)
 
     @app.get('/api/health')
     def health(db=Depends(get_db)):
         db.execute(text('SELECT 1'))
-        return {'status': 'ok', 'environment': settings.environment, 'sms': settings.sms_mode, 'integration_109': settings.integration_mode, 'database': engine.dialect.name}
+        return {'status': 'ok', 'environment': settings.environment, 'auth_mode': settings.auth_mode, 'sms': settings.sms_mode if settings.auth_mode == 'otp' else 'disabled', 'integration_109': settings.integration_mode, 'database': engine.dialect.name}
+
+    def require_auth_mode(mode):
+        if settings.auth_mode != mode:
+            raise HTTPException(404, 'Этот способ входа отключён')
+
+    def start_session(user, request, response, db):
+        # Rotate the current session instead of retaining a fixed login cookie.
+        previous = request.cookies.get('roadscan_session')
+        if previous:
+            old = db.get(Session, digest(settings, 'session:' + previous))
+            if old:
+                db.delete(old)
+        token = secrets.token_urlsafe(48)
+        db.add(Session(token_hash=digest(settings, 'session:' + token), user_id=user.id, expires_at=now() + 30 * 86400))
+        db.commit()
+        response.set_cookie('roadscan_session', token, max_age=30 * 86400, httponly=True, secure=settings.environment == 'production', samesite='lax', path='/')
+        return {'id': user.id, 'role': user.role}
+
+    def password_limits(phone, request, db, registering=False):
+        ip = request.client.host if request.client else 'unknown'
+        limit(db, settings, 'password-ip:' + ip, 30, 900)
+        limit(db, settings, 'password-phone:' + phone, 5, 900)
+        if registering:
+            limit(db, settings, 'registration-ip:' + ip, 10, 3600)
+        # Persist unsuccessful attempts as well; release locks before scrypt.
+        db.commit()
+
+    @app.post('/api/auth/register', status_code=201)
+    def register(body: PasswordRegistration, request: Request, response: Response, db=Depends(get_db)):
+        require_auth_mode('password')
+        phone = normalize_phone(body.phone)
+        password_limits(phone, request, db, registering=True)
+        encoded = hash_password(body.password)
+        phone_key = digest(settings, 'phone:' + phone)
+        if db.bind.dialect.name == 'sqlite':
+            db.execute(text('BEGIN IMMEDIATE'))
+        lock_key(db, 'phone:' + phone_key)
+        if db.scalar(select(User).where(User.phone_key == phone_key)):
+            # Never attach a new password to an account on a claimed phone alone.
+            raise HTTPException(409, 'Не удалось создать аккаунт с этим номером. Если он уже зарегистрирован, используйте вход.')
+        user = User(phone_key=phone_key, phone_encrypted=cipher(settings).encrypt(phone.encode()).decode(), password_hash=encoded, phone_verified=False, consent_version='password-pilot-v1')
+        db.add(user)
+        db.flush()
+        audit(db, user, None, 'registered', 'Создан аккаунт без подтверждения номера телефона.')
+        return start_session(user, request, response, db)
+
+    @app.post('/api/auth/login')
+    def password_login(body: PasswordLogin, request: Request, response: Response, db=Depends(get_db)):
+        require_auth_mode('password')
+        phone = normalize_phone(body.phone)
+        password_limits(phone, request, db)
+        user = db.scalar(select(User).where(User.phone_key == digest(settings, 'phone:' + phone)))
+        if not verify_password(body.password, user.password_hash if user else None):
+            raise HTTPException(401, 'Неверный номер телефона или пароль')
+        return start_session(user, request, response, db)
 
     @app.post('/api/auth/request')
     def request_otp(body: PhoneRequest, request: Request, db=Depends(get_db)):
+        require_auth_mode('otp')
         phone = normalize_phone(body.phone)
         limit(db, settings, 'sms-ip:' + (request.client.host if request.client else 'unknown'), 15, 600)
         limit(db, settings, 'sms-phone:' + phone, 1, 60)
@@ -156,7 +213,8 @@ def create_app(settings=None):
         return data
 
     @app.post('/api/auth/verify')
-    def verify(body: VerifyRequest, response: Response, db=Depends(get_db)):
+    def verify(body: VerifyRequest, request: Request, response: Response, db=Depends(get_db)):
+        require_auth_mode('otp')
         challenge = db.scalar(select(Challenge).where(Challenge.id == str(body.challenge_id)).with_for_update())
         if not challenge or challenge.used or challenge.expires_at <= now() or challenge.attempts >= 5:
             raise HTTPException(400, 'Код недействителен. Запросите новый.')
@@ -171,16 +229,14 @@ def create_app(settings=None):
             user = User(phone_key=challenge.phone_key, phone_encrypted=challenge.phone_encrypted)
             db.add(user)
             db.flush()
-        token = secrets.token_urlsafe(48)
-        db.add(Session(token_hash=digest(settings, 'session:' + token), user_id=user.id, expires_at=now() + 30 * 86400))
-        db.commit()
-        response.set_cookie('roadscan_session', token, max_age=30 * 86400, httponly=True, secure=settings.environment == 'production', samesite='lax', path='/')
-        return {'id': user.id, 'role': user.role}
+        if settings.sms_mode == 'bridge':
+            user.phone_verified = True
+        return start_session(user, request, response, db)
 
     @app.get('/api/auth/me')
     def me(user=Depends(current_user)):
         phone = cipher(settings).decrypt(user.phone_encrypted.encode()).decode()
-        return {'id': user.id, 'role': user.role, 'phone': phone, 'consent_version': user.consent_version}
+        return {'id': user.id, 'role': user.role, 'phone': phone, 'phone_verified': user.phone_verified, 'consent_version': user.consent_version}
 
     @app.post('/api/auth/logout')
     def logout(request: Request, response: Response, user=Depends(current_user), db=Depends(get_db)):

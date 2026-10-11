@@ -1,0 +1,43 @@
+# Free contest stand: external Supabase PostgreSQL + private Storage.
+# Fill sync:false values in Render. Never put secrets in this file.
+services:
+  - type: web
+    name: roadscan-api
+    runtime: docker
+    repo: https://github.com/ernur077sss-art/RoadScan-AI
+    branch: main
+    plan: free
+    region: frankfurt
+    dockerfilePath: ./Dockerfile.api
+    dockerContext: .
+    healthCheckPath: /api/health
+    autoDeployTrigger: "off"
+    envVars:
+      - key: ROADSCAN_ENV
+        value: production
+      - key: ROADSCAN_AUTH_MODE
+        value: password
+      - key: ROADSCAN_109_MODE
+        value: disabled
+      - key: ROADSCAN_STORAGE
+        value: s3
+      - key: ROADSCAN_DATA_DIR
+        value: /app/.data
+      - key: ROADSCAN_MIGRATE_ON_START
+        value: "1"
+      - key: ROADSCAN_SECRET
+        generateValue: true
+      - key: ROADSCAN_ORIGIN
+        sync: false
+      - key: ROADSCAN_DATABASE_URL
+        sync: false
+      - key: ROADSCAN_S3_ENDPOINT
+        sync: false
+      - key: ROADSCAN_S3_BUCKET
+        value: roadscan-evidence
+      - key: AWS_DEFAULT_REGION
+        sync: false
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false

@@ -24,7 +24,7 @@ jobs:
       - name: Migrate real PostgreSQL and PostGIS
         env:
           ROADSCAN_DATABASE_URL: postgresql+psycopg://roadscan:local-ci-only@localhost:5432/roadscan_test
-        run: alembic upgrade head
+        run: python -m api.migrate
       - run: python -m scripts.check_brand
       - name: API tests on PostgreSQL
         env:

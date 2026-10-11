@@ -7,6 +7,7 @@ import subprocess
 import tempfile
 import warnings
 import boto3
+from botocore.config import Config
 import imageio_ffmpeg
 from PIL import Image, ImageOps, UnidentifiedImageError
 from fastapi import HTTPException
@@ -19,7 +20,15 @@ class Storage:
         self.settings = settings
         self.root = settings.data_dir / 'media'
         self.root.mkdir(parents=True, exist_ok=True)
-        self.client = boto3.client('s3', endpoint_url=settings.s3_endpoint or None) if settings.storage == 's3' else None
+        # Custom S3 endpoints (including Supabase) use a path prefix and SigV4.
+        # Optional AWS checksums are not universally supported by compatible stores.
+        config = Config(
+            signature_version='s3v4',
+            s3={'addressing_style': 'path'},
+            request_checksum_calculation='when_required',
+            response_checksum_validation='when_required',
+        ) if settings.s3_endpoint else None
+        self.client = boto3.client('s3', endpoint_url=settings.s3_endpoint or None, config=config) if settings.storage == 's3' else None
 
     def put(self, key, path, mime):
         if self.client:

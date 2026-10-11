@@ -21,6 +21,8 @@ class User(Base):
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uid)
     phone_key: Mapped[str] = mapped_column(String(64), unique=True)
     phone_encrypted: Mapped[str] = mapped_column(Text)
+    password_hash: Mapped[str | None] = mapped_column(Text, nullable=True)
+    phone_verified: Mapped[bool] = mapped_column(Boolean, default=False, server_default='0')
     role: Mapped[str] = mapped_column(String(16), default='citizen')
     created_at: Mapped[int] = mapped_column(Integer, default=now)
     consent_version: Mapped[str] = mapped_column(String(40), default='pilot-v1')

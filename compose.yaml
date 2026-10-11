@@ -22,6 +22,7 @@ services:
       ROADSCAN_ENV: development
       ROADSCAN_DATABASE_URL: postgresql+psycopg://roadscan:${POSTGRES_PASSWORD:-roadscan-local-only}@db:5432/roadscan
       ROADSCAN_ORIGIN: http://localhost:3000
+      ROADSCAN_AUTH_MODE: password
       ROADSCAN_SMS_MODE: development
       ROADSCAN_109_MODE: ${ROADSCAN_109_MODE:-disabled}
       ROADSCAN_STORAGE: local

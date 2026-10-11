@@ -1,10 +1,10 @@
 #!/bin/sh
 set -eu
 
-# Production migrations are a separate release step, before new replicas start.
-# Keep the existing one-command startup for the local Docker Compose environment.
-if [ "${ROADSCAN_ENV:-development}" != "production" ]; then
-  python -m alembic upgrade head
+# Default production uses a separate release step. Render Free has no release
+# jobs, so its blueprint explicitly opts into locked migrations before startup.
+if [ "${ROADSCAN_MIGRATE_ON_START:-0}" = "1" ] || [ "${ROADSCAN_ENV:-development}" != "production" ]; then
+  python -m api.migrate
 fi
 
 exec python -m uvicorn api.main:app \

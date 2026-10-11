@@ -37,6 +37,7 @@ export default defineConfig({
         ROADSCAN_DATABASE_URL: "sqlite:///" + path.join(data, "test.db"),
         ROADSCAN_DATA_DIR: data,
         ROADSCAN_ORIGIN: "http://localhost:3100",
+        ROADSCAN_AUTH_MODE: "password",
         ROADSCAN_SMS_MODE: "development",
         ROADSCAN_109_MODE: "disabled",
       },

@@ -117,7 +117,7 @@ def test_frozen_initial_migration_can_start_application(tmp_path):
     database_url = 'sqlite:///' + str(tmp_path / 'migrated.db')
     result = subprocess.run([sys.executable, '-m', 'alembic', 'upgrade', 'head'], env={**os.environ, 'ROADSCAN_DATABASE_URL': database_url, 'ROADSCAN_DATA_DIR': str(tmp_path), 'ROADSCAN_ENV': 'test'}, capture_output=True)
     assert result.returncode == 0, result.stderr.decode()
-    settings = Settings(environment='test', database_url=database_url, data_dir=tmp_path)
+    settings = Settings(auth_mode='otp', environment='test', database_url=database_url, data_dir=tmp_path)
     with TestClient(create_app(settings), headers=HEADERS) as migrated:
         login(migrated)
         assert report(migrated)['status'] == 'pending'

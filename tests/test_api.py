@@ -18,7 +18,7 @@ HEADERS = {'origin': ORIGIN, 'x-roadscan-request': '1'}
 def app(tmp_path):
     import os
     database_url = os.getenv('ROADSCAN_TEST_DATABASE_URL', 'sqlite:///' + str(tmp_path / 'test.db'))
-    settings = Settings(environment='test', database_url=database_url, origin=ORIGIN, data_dir=tmp_path, secret='testing-secret-never-use-outside-tests-123456789', integration_mode='simulator')
+    settings = Settings(auth_mode='otp', environment='test', database_url=database_url, origin=ORIGIN, data_dir=tmp_path, secret='testing-secret-never-use-outside-tests-123456789', integration_mode='simulator')
     app = create_app(settings)
     if database_url.startswith('postgresql'):
         from api.models import Base
@@ -199,7 +199,7 @@ def test_phone_is_encrypted(client, app):
 
 def test_production_cannot_use_test_auth(tmp_path):
     with pytest.raises(ValueError):
-        Settings(environment='production', secret='x' * 48, data_dir=tmp_path, origin='https://roadscan.example').prepare()
+        Settings(auth_mode='otp', environment='production', secret='x' * 48, data_dir=tmp_path, origin='https://roadscan.example').prepare()
 
 
 def test_persistence_after_restart(client, app):

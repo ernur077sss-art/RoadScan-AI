@@ -9,12 +9,18 @@ function phone() {
 }
 async function login(page: Page, number = phone()) {
   await page.goto("/login");
+  await page
+    .getByRole("button", { name: "Нет аккаунта? Зарегистрироваться" })
+    .click();
   await page.getByLabel("Номер телефона").fill(number);
+  await page
+    .getByLabel("Пароль", { exact: true })
+    .fill("Тестовый пароль для E2E!");
+  await page.getByLabel("Повторите пароль").fill("Тестовый пароль для E2E!");
   await page.getByRole("checkbox").check();
-  await page.getByRole("button", { name: "Получить код" }).click();
-  const code = await page.locator(".test-code code").innerText();
-  await page.getByLabel("Код из SMS").fill(code);
-  await page.getByRole("button", { name: "Подтвердить и войти" }).click();
+  await page
+    .getByRole("button", { name: "Зарегистрироваться", exact: true })
+    .click();
   await expect(page).toHaveURL(/\/reports$/);
   return number;
 }
@@ -51,6 +57,29 @@ async function noOverflow(page: Page) {
   ).toBe(true);
 }
 const headers = { Origin: "http://localhost:3100", "X-RoadScan-Request": "1" };
+
+test("вход с паролем после выхода", async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  const number = await login(page);
+  expect(
+    (await page.request.post("/api/auth/logout", { headers })).status(),
+  ).toBe(200);
+  await page.goto("/login?next=/reports/new");
+  await page.getByLabel("Номер телефона").fill(number);
+  await page
+    .getByLabel("Пароль", { exact: true })
+    .fill("Неверный тестовый пароль");
+  await page.getByRole("button", { name: "Войти", exact: true }).click();
+  await expect(page.locator(".auth-card").getByRole("alert")).toContainText(
+    "Неверный номер телефона или пароль",
+  );
+  await page
+    .getByLabel("Пароль", { exact: true })
+    .fill("Тестовый пароль для E2E!");
+  await page.getByRole("button", { name: "Войти", exact: true }).click();
+  await expect(page).toHaveURL(/\/reports\/new$/);
+  await noOverflow(page);
+});
 
 test("житель → черновик → повтор отправки → уточнение → инспектор → KPI", async ({
   page,

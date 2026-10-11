@@ -1,9 +1,11 @@
 export type User = {
   id: string;
   phone: string;
+  phone_verified: boolean;
   role: "citizen" | "inspector" | "admin";
 };
 export type Health = {
+  auth_mode: "password" | "otp";
   environment: string;
   sms: string;
   integration_109: string;
